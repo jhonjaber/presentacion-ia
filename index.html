@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Clase Modelo: Iniciacion a la IA</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --secondary: #64748b;
+                --dark: #0f172a;
+                --light: #f8fafc;
+                --accent: #06b6d4;
+            }
+
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background-color: var(--dark);
+                color: var(--light);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-height: 100vh;
+                background: linear-gradient(180deg, #071033 0%, #0b1220 60%, var(--dark) 100%),
+                    radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.06), transparent 12%),
+                    radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.04), transparent 18%);
+                background-repeat: no-repeat;
+            }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background-image: repeating-linear-gradient(
+                        0deg,
+                        rgba(255, 255, 255, 0.015) 0 1px,
+                        transparent 1px 36px
+                    ),
+                    repeating-linear-gradient(
+                        90deg,
+                        rgba(255, 255, 255, 0.015) 0 1px,
+                        transparent 1px 36px
+                    );
+                opacity: 0.08;
+                mix-blend-mode: overlay;
+                animation: moveGrid 30s linear infinite;
+            }
+
+            body::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background-image: radial-gradient(circle at 20% 15%, rgba(6, 182, 212, 0.03), transparent 6%),
+                    radial-gradient(circle at 80% 85%, rgba(37, 99, 235, 0.02), transparent 8%);
+                opacity: 1;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1100px;
+                margin: 0 auto;
+                min-height: calc(100vh - 32px);
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                position: relative;
+            }
+
+            .slide {
+                display: none;
+                background: #ffffff;
+                color: #0f172a;
+                padding: 32px;
+                border-radius: 15px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+                min-height: 0;
+                max-height: calc(100vh - 140px);
+                text-align: center;
+                position: relative;
+                overflow: auto;
+                pointer-events: none;
+                flex: 1 1 auto;
+            }
+
+            .slide::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: linear-gradient(90deg, rgba(6, 182, 212, 0.02) 1px, transparent 1px),
+                    linear-gradient(180deg, rgba(37, 99, 235, 0.02) 1px, transparent 1px),
+                    radial-gradient(circle at 10% 10%, rgba(6, 182, 212, 0.03), transparent 6%),
+                    radial-gradient(circle at 90% 90%, rgba(37, 99, 235, 0.02), transparent 8%);
+                background-size: 100px 100px, 100px 100px, 30% 30%, 30% 30%;
+                opacity: 0.45;
+                pointer-events: none;
+                mix-blend-mode: overlay;
+                transform: translateZ(0);
+                animation: slideOverlayMove 18s linear infinite;
+                z-index: 1;
+            }
+
+            .slide::after {
+                content: "";
+                position: absolute;
+                left: -20%;
+                top: -40%;
+                width: 160%;
+                height: 160%;
+                background: radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.025), transparent 8%),
+                    radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.02), transparent 10%);
+                pointer-events: none;
+                opacity: 0.9;
+                mix-blend-mode: screen;
+                z-index: 1;
+            }
+
+            .slide > * {
+                position: relative;
+                z-index: 2;
+            }
+
+            .slide-logo {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                width: 90px;
+                height: auto;
+                opacity: 0.98;
+                z-index: 5;
+                pointer-events: none;
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.75))
+                    drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+            }
+
+            .active {
+                display: block;
+                animation: slideIn 0.45s ease;
+                pointer-events: auto;
+            }
+
+            .slide.exiting {
+                display: block;
+                animation: slideOut 0.28s ease;
+                pointer-events: none;
+            }
+
+            h1,
+            h2 {
+                color: var(--accent);
+            }
+
+            .image-suggestion {
+                background: #e5e7eb;
+                padding: 10px;
+                border-left: 4px solid #9ca3af;
+                margin: 20px 0;
+                font-style: italic;
+                font-size: 0.9em;
+                color: #0f172a;
+            }
+
+            .instructor-notes {
+                background: #e5e7eb;
+                padding: 15px;
+                margin-top: 20px;
+                border-radius: 8px;
+                border: 1px dashed #9ca3af;
+                color: #0f172a;
+            }
+
+            .nav-buttons {
+                margin-top: 0;
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+                flex: 0 0 auto;
+            }
+
+            button {
+                padding: 12px 25px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: 0.3s;
+            }
+
+            .btn-prev {
+                background: var(--secondary);
+                color: white;
+            }
+
+            .btn-next {
+                background: var(--primary);
+                color: white;
+            }
+
+            button:hover {
+                opacity: 0.8;
+                transform: translateY(-2px);
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            table {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            ul {
+                display: inline-block;
+                text-align: left;
+            }
+
+            th,
+            td {
+                border: 1px solid var(--secondary);
+                padding: 12px;
+                text-align: left;
+            }
+
+            th {
+                background: var(--primary);
+                color: white;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(18px) scale(0.98);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(-12px) scale(0.985);
+                }
+            }
+
+            @keyframes moveGrid {
+                from {
+                    background-position: 0 0, 0 0;
+                }
+                to {
+                    background-position: 1200px 1200px, -1200px -1200px;
+                }
+            }
+
+            @keyframes slideOverlayMove {
+                from {
+                    background-position: 0 0, 0 0, 0 0, 0 0;
+                }
+                to {
+                    background-position: 200px 200px, -200px -200px, 0 0, 0 0;
+                }
+            }
+
+            .slide h1,
+            .slide h2 {
+                text-shadow: 0 2px 8px rgba(6, 182, 212, 0.04);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="slide active" id="slide1">
+                <img class="slide-logo" src="logo.png" alt="Logo" />
+                <h1>Bienvenida y Contexto</h1>
+                <h2>La Inteligencia Artificial en nuestra vida diaria</h2>
+                <ul>
+                    <li>¿Dónde vemos IA todos los días?</li>
+                    <li>Expectativas del curso</li>
+                </ul>
+                <p style="margin-top: 12px; color: var(--secondary); font-weight: 600">
+                    Instructor: Jhon Jaber Giraldo Marín
+                </p>
+
+                <figure style="margin: 20px 0">
+                    <img
+                        src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80"
+                        alt="IA en la vida cotidiana: asistente virtual, smartphone y ciudad inteligente"
+                        style="
+                            width: 100%;
+                            max-height: 320px;
+                            object-fit: cover;
+                            border-radius: 10px;
+                            border: 1px solid rgba(255, 255, 255, 0.06);
+                        "
+                    />
+                    <figcaption
+                        style="
+                            text-align: center;
+                            font-size: 0.9em;
+                            color: var(--secondary);
+                            margin-top: 8px;
+                        "
+                    >
+                        IA en la vida cotidiana: asistentes virtuales, celulares y ciudades
+                        inteligentes.
+                    </figcaption>
+                </figure>
+                <div class="instructor-notes">
+                    <strong>Cordial saludo,aprendices</strong>
+                    "Hoy vamos a hablar de algo que ya hace parte de su vida, aunque no
+                    siempre lo noten: la Inteligencia Artificial..."
+                </div>
+            </div>
+
+            <div class="slide" id="slide2">
+                <img class="slide-logo" src="logo.png" alt="Logo" />
+                <h1>Actividad Detonante</h1>
+                <h2>Pregunta del día:</h2>
+                <p style="font-size: 1.5em; text-align: center">
+                    ¿Qué aplicación usaste hoy que tenga IA?
+                </p>
+                <p>Socialización rápida en el grupo.</p>
+                <div class="image-suggestion">Personas interactuando con tecnología.</div>
+                <figure style="margin: 18px 0">
+                    <img
+                        src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1400&q=80"
+                        alt="Personas interactuando con tecnología"
+                        style="
+                            width: 100%;
+                            max-height: 300px;
+                            object-fit: cover;
+                            border-radius: 10px;
+                            border: 1px solid rgba(255, 255, 255, 0.06);
+                        "
+                    />
+                    <figcaption
+                        style="
+                            text-align: center;
+                            font-size: 0.9em;
+                            color: var(--secondary);
+                            margin-top: 8px;
+                        "
+                    >
+                        Personas interactuando con tecnología — interacción humano-tecnológica
+                        cotidiana.
+                    </figcaption>
+                </figure>
+                <div class="instructor-notes">
+                    <strong>Hablemos un poco de lo que se está viviendo:</strong> Mencione
+                    algoritmos de redes sociales o mapas de navegación si no surgen ejemplos.
+                </div>
+            </div>
+
+            <div class="slide" id="slide3">
+                <img class="slide-logo" src="logo.png" alt="Logo" />
+                <h1>IA y Sociedad</h1>
+                <ul>
+                    <li><strong>Educación:</strong> Personalización del aprendizaje.</li>
+                    <li><strong>Salud:</strong> Diagnósticos asistidos.</li>
+                    <li><strong>Industria:</strong> Automatización y optimización.</li>
+                </ul>
+                <div class="image-suggestion">IA en salud, educación e industria.</div>
+                <figure style="margin: 18px 0">
+                    <div
+                        style="
+                            width: 100%;
+                            max-height: 320px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: linear-gradient(180deg, rgba(6, 182, 212, 0.06), transparent);
+                            border-radius: 10px;
+                            overflow: hidden;
+                            border: 1px solid rgba(255, 255, 255, 0.04);
+                        "
+                    >
+                        <svg
+                            viewBox="0 0 900 300"
+                            xmlns="http://www.w3.org/2000/svg"
+                            style="width: 100%; height: auto; max-height: 320px"
+                        >
+                            <defs>
+                                <linearGradient id="g2" x1="0" x2="1">
+                                    <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.15" />
+                                    <stop offset="100%" stop-color="#2563eb" stop-opacity="0.08" />
+                                </linearGradient>
+                                <style>
+                                    text {
+                                        fill: #0f172a;
+                                        font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+                                    }
+                                </style>
+                            </defs>
+                            <rect width="900" height="300" fill="url(#g2)" />
+                            <g transform="translate(90,70)">
+                                <rect
+                                    x="0"
+                                    y="0"
+                                    width="200"
+                                    height="160"
+                                    rx="12"
+                                    fill="#ffffff"
+                                    fill-opacity="0.06"
+                                    stroke="#ffffff"
+                                    stroke-opacity="0.04"
+                                />
+                                <path
+                                    d="M100 30 v40 M80 50 h40"
+                                    stroke="#06b6d4"
+                                    stroke-width="10"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                                <text x="100" y="135" font-size="18" text-anchor="middle" fill="#cbd5e1">
+                                    Salud
+                                </text>
+                            </g>
+                            <g transform="translate(350,60)">
+                                <rect
+                                    x="0"
+                                    y="0"
+                                    width="200"
+                                    height="160"
+                                    rx="12"
+                                    fill="#ffffff"
+                                    fill-opacity="0.06"
+                                    stroke="#ffffff"
+                                    stroke-opacity="0.04"
+                                />
+                                <path d="M30 40 L170 40 L100 110 Z" fill="#06b6d4" opacity="0.18" />
+                                <path
+                                    d="M40 50 L160 50"
+                                    stroke="#06b6d4"
+                                    stroke-width="8"
+                                    stroke-linecap="round"
+                                />
+                                <text x="100" y="135" font-size="18" text-anchor="middle" fill="#cbd5e1">
+                                    Educación
+                                </text>
+                            </g>
+                            <g transform="translate(610,60)">
+                                <rect
+                                    x="0"
+                                    y="0"
+                                    width="200"
+                                    height="160"
+                                    rx="12"
+                                    fill="#ffffff"
+                                    fill-opacity="0.06"
+                                    stroke="#ffffff"
+                                    stroke-opacity="0.04"
+                                />
+                                <rect x="30" y="60" width="40" height="50" fill="#2563eb" opacity="0.18" />
+                                <rect x="80" y="40" width="30" height="70" fill="#06b6d4" opacity="0.18" />
+                                <rect x="120" y="80" width="40" height="30" fill="#2563eb" opacity="0.18" />
+                                <text x="100" y="135" font-size="18" text-anchor="middle" fill="#cbd5e1">
+                                    Industria
+                                </text>
+                            </g>
+                        </svg>
+                    </div>
+                    <figcaption
+                        style="
+                            text-align: center;
+                            font-size: 0.9em;
+                            color: var(--secondary);
+                            margin-top: 8px;
+                        "
+                    >
+                        IA en salud, educación e industria — diagnósticos asistidos,
+                        personalización del aprendizaje y automatización.
+                    </figcaption>
+                </figure>
+                <div class="instructor-notes">
+                    <strong>Veamos algunos ejemplos:</strong> Presentar ejemplos reales de
+                    cómo estos sectores se han transformado con la IA.
+                </div>
+            </div>
+
+            <div class="slide" id="slide4">
+                <img class="slide-logo" src="logo.png" alt="Logo" />
+                <h1>Ética y Datos</h1>
+                <ul>
+                    <li>Privacidad de la información.</li>
+                    <li>Identificación de sesgos.</li>
+                    <li>Uso responsable de la tecnología.</li>
+                </ul>
+                <div class="image-suggestion">Ética digital, protección de datos.</div>
+                <figure style="margin: 18px 0">
+                    <img
+                        src="https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1400&q=80"
+                        alt="Ética digital y protección de datos"
+                        style="
+                            width: 100%;
+                            max-height: 320px;
+                            object-fit: cover;
+                            border-radius: 10px;
+                            border: 1px solid rgba(255, 255, 255, 0.06);
+                        "
+                    />
+                    <figcaption
+                        style="
+                            text-align: center;
+                            font-size: 0.9em;
+                            color: var(--secondary);
+                            margin-top: 8px;
+                        "
+                    >
+                        Ética digital y protección de datos — privacidad y responsabilidad en
+                        el uso de IA.
+                    </figcaption>
+                </figure>
+                <div class="instructor-notes">
+                    <strong>Qué pasa con nuestros datos:</strong> Guiar la reflexión ética.
+                    ¿Qué pasa con nuestros datos cuando usamos estas apps?
+                </div>
+            </div>
+
+            <div class="slide" id="slide5">
+                <img class="slide-logo" src="logo.png" alt="Logo" />
+                <h1>Cierre Reflexivo</h1>
+                <h2>Actividad de salida</h2>
+                <p>
+                    Completa la frase: <strong>“La IA es importante porque…”</strong>
+                </p>
+                <div class="image-suggestion">Trabajo colaborativo / reflexión.</div>
+                <figure style="margin: 18px 0">
+                    <img
+                        src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=80"
+                        alt="Trabajo colaborativo y reflexión"
+                        style="
+                            width: 100%;
+                            max-height: 300px;
+                            object-fit: cover;
+                            border-radius: 10px;
+                            border: 1px solid rgba(255, 255, 255, 0.06);
+                        "
+                    />
+                    <figcaption
+                        style="
+                            text-align: center;
+                            font-size: 0.9em;
+                            color: var(--secondary);
+                            margin-top: 8px;
+                        "
+                    >
+                        Trabajo colaborativo y reflexión — actividades de cierre y discusión.
+                    </figcaption>
+                </figure>
+                <div class="instructor-notes">
+                    <strong>Escribamos un ejemplo personal:</strong> "Escriban una frase
+                    donde expliquen por qué consideran importante la IA en su entorno…"
+                </div>
+            </div>
+
+            <div class="slide" id="slide6">
+                <img class="slide-logo" src="logo.png" alt="Logo" />
+                <h1>Instrumento de Evaluación</h1>
+                <h3>Lista de Chequeo</h3>
+                <table>
+                    <tr>
+                        <th>Criterio</th>
+                        <th>Estado</th>
+                    </tr>
+                    <tr>
+                        <td>Participa en la discusión grupal</td>
+                        <td>⬜ Cumple / ⬜ No cumple</td>
+                    </tr>
+                    <tr>
+                        <td>Identifica ejemplos de IA en la vida diaria</td>
+                        <td>⬜ Cumple / ⬜ No cumple</td>
+                    </tr>
+                    <tr>
+                        <td>Reconoce la importancia de la ética de datos</td>
+                        <td>⬜ Cumple / ⬜ No cumple</td>
+                    </tr>
+                    <tr>
+                        <td>Argumenta su punto de vista</td>
+                        <td>⬜ Cumple / ⬜ No cumple</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="changeSlide(-1)">Anterior</button>
+                <button class="btn-next" onclick="changeSlide(1)">Siguiente</button>
+            </div>
+        </div>
+
+        <script>
+            let currentSlide = 0;
+            let isTransitioning = false;
+            const slides = document.querySelectorAll(".slide");
+
+            function showSlide(index) {
+                slides.forEach((s, i) => {
+                    if (i === index) {
+                        s.classList.add("active");
+                    } else {
+                        s.classList.remove("active", "exiting");
+                    }
+                });
+            }
+
+            function changeSlide(step) {
+                if (isTransitioning) return;
+
+                const nextIndex = Math.min(Math.max(currentSlide + step, 0), slides.length - 1);
+                if (nextIndex === currentSlide) return;
+
+                const current = slides[currentSlide];
+                const next = slides[nextIndex];
+                isTransitioning = true;
+
+                current.classList.add("exiting");
+
+                setTimeout(() => {
+                    current.classList.remove("active", "exiting");
+                    next.classList.add("active");
+                    currentSlide = nextIndex;
+                    isTransitioning = false;
+                }, 280);
+            }
+        </script>
+    </body>
+</html>
