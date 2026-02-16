@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENA - Iniciación IA (96 Horas)</title>
+    <style>
+        :root {
+            --sena-green: #39A900;
+            --sena-black: #2f2f2f;
+            --sena-white: #ffffff;
+            --bg-light: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--sena-black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .presentation-container {
+            width: 90%;
+            max-width: 1100px;
+            height: 700px;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border-radius: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 40px;
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .slide.active { display: block; animation: fadeIn 0.3s; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--sena-green);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-sena { height: 50px; }
+
+        .session-info {
+            background: var(--sena-green);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .content-grid > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1, h2 { color: var(--sena-green); margin-top: 0; }
+        
+        .example-box {
+            background: #f9f9f9;
+            border-left: 4px solid var(--sena-green);
+            padding: 15px;
+            font-style: normal;
+            margin-top: 10px;
+            text-align: left;
+            max-height: 460px;
+            overflow-y: auto;
+            width: 100%;
+            max-width: 520px;
+            box-sizing: border-box;
+            color: #222;
+            display: none;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .image-placeholder {
+            background: #eee;
+            border: 2px dashed #ccc;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #777;
+            padding: 20px;
+        }
+
+        .image-frame {
+            width: 100%;
+            height: 260px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f0f0f0;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+            margin-top: 1.5cm;
+            cursor: pointer;
+        }
+
+        .image-frame svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            color: #222;
+            width: min(640px, 92%);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            padding: 24px 28px;
+            position: relative;
+        }
+
+        .modal-title {
+            margin: 0 0 10px 0;
+            color: var(--sena-green);
+        }
+
+        #modalText {
+            max-height: 55vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: transparent;
+            color: #333;
+            font-size: 22px;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background: var(--sena-green);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:disabled { background: #ccc; }
+
+        .progress-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+
+<div class="presentation-container" id="container">
+    
+    <div class="slide active">
+        <div style="text-align: center; margin-top: 100px;">
+            <img src="logo.png" alt="Logo SENA" style="height: 120px;">
+            <h1>Iniciación a la Inteligencia Artificial</h1>
+            <h3>Programa 23310010 | 96 Horas Totales</h3>
+            <p>Estructura de 12 Semanas (2 Sesiones de 4 horas por semana)</p>
+            <p><strong>Instructor:</strong> Jhon Jaber Giraldo Marín</p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 1 - Sesión 1</span> <h2>Impacto de la IA</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Análisis de cómo la IA transforma la vida cotidiana y los sectores productivos.</p>
+                <div class="example-box">
+                    <strong>Actividad:</strong> Conversatorio sobre el uso de algoritmos en redes sociales y servicios de streaming.
+                </div>
+            </div>
+            <div class="image-frame" data-title="Impacto de la IA" data-example="Ejemplo: un sistema de recomendación en streaming analiza tu historial y sugiere nuevas series personalizadas.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Impacto de la IA">
+                    <defs>
+                        <linearGradient id="impacto" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#1b7f5f" />
+                            <stop offset="100%" stop-color="#1e3a5f" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#impacto)" />
+                    <circle cx="120" cy="120" r="60" fill="#39A900" opacity="0.85" />
+                    <circle cx="220" cy="200" r="40" fill="#ffffff" opacity="0.25" />
+                    <circle cx="680" cy="110" r="70" fill="#ffffff" opacity="0.15" />
+                    <rect x="80" y="260" width="640" height="90" rx="16" fill="#ffffff" opacity="0.12" />
+                    <text x="70" y="95" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Impacto de la IA</text>
+                    <text x="70" y="145" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#e7f4ef">Vida cotidiana, industrias y servicios</text>
+                    <polyline points="90,320 180,290 270,305 360,270 450,285 540,250 620,265" fill="none" stroke="#39A900" stroke-width="6" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 1 - Sesión 2</span> <h2>Ética y Datos</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Debate sobre la privacidad, el sesgo algorítmico y la responsabilidad ética.</p>
+                <div class="example-box">
+                    <strong>Entregable:</strong> Creación de un mapa mental colaborativo sobre dilemas éticos[cite: 19].
+                </div>
+            </div>
+            <div class="image-frame" data-title="Ética y Datos" data-example="Ejemplo: un modelo de selección de personal debe evitar sesgos por género o edad; se revisan variables sensibles y resultados.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ética y datos">
+                    <defs>
+                        <linearGradient id="etica" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#7a4f00" />
+                            <stop offset="100%" stop-color="#1e5f8a" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#etica)" />
+                    <rect x="80" y="90" width="260" height="210" rx="18" fill="#ffffff" opacity="0.15" />
+                    <rect x="110" y="120" width="200" height="30" rx="8" fill="#ffffff" opacity="0.35" />
+                    <rect x="110" y="170" width="200" height="30" rx="8" fill="#ffffff" opacity="0.35" />
+                    <rect x="110" y="220" width="200" height="30" rx="8" fill="#ffffff" opacity="0.35" />
+                    <line x1="470" y1="150" x2="670" y2="150" stroke="#ffffff" stroke-width="6" />
+                    <line x1="570" y1="150" x2="570" y2="240" stroke="#ffffff" stroke-width="6" />
+                    <circle cx="520" cy="260" r="36" fill="#39A900" />
+                    <circle cx="620" cy="260" r="36" fill="#f5c542" />
+                    <text x="70" y="70" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Ética y Datos</text>
+                    <text x="70" y="115" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#f7e8c9">Privacidad, sesgos y responsabilidad</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 2 - Sesión 3</span> <h2>Diagnóstico Matemático</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Evaluación de conocimientos previos y refuerzo de lógica matemática.</p>
+                <div class="example-box">
+                    <strong>Sistema de Ecuaciones Lineales (2x2)</strong>
+                    <p>Ecuación 1: $2x + y = 14$</p>
+                    <p>Ecuación 2: $x - y = 2$</p>
+                    <p><strong>Paso 1: Despejar una variable</strong></p>
+                    <p>Elegimos la ecuación más sencilla para despejar una de las incógnitas. En este caso, tomamos la Ecuación 2 para despejar $y$:</p>
+                    <p>$$x - y = 2$$</p>
+                    <p>$$-y = 2 - x$$</p>
+                    <p>Multiplicamos por $-1$ para que la $y$ sea positiva:</p>
+                    <p>$$y = x - 2$$</p>
+                    <p><strong>Paso 2: Sustituir en la otra ecuación</strong></p>
+                    <p>Ahora tomamos el valor que encontramos para $y$ ($x - 2$) y lo introducimos en la Ecuación 1:</p>
+                    <p>$$2x + (x - 2) = 14$$</p>
+                    <p><strong>Paso 3: Resolver la ecuación de una sola variable</strong></p>
+                    <p>Sumamos las $x$ y despejamos:</p>
+                    <p>$$2x + x - 2 = 14$$</p>
+                    <p>$$3x - 2 = 14$$</p>
+                    <p>$$3x = 14 + 2$$</p>
+                    <p>$$3x = 16$$</p>
+                    <p>Resultado para x: $$x = \frac{16}{3}$$</p>
+                    <p><strong>Paso 4: Encontrar el valor de la segunda variable</strong></p>
+                    <p>Sustituimos el valor de $x$ en la expresión que despejamos en el Paso 1 ($y = x - 2$):</p>
+                    <p>$$y = \frac{16}{3} - 2$$</p>
+                    <p>Para restar, convertimos el $2$ en tercios ($2 = 6/3$):</p>
+                    <p>$$y = \frac{16}{3} - \frac{6}{3}$$</p>
+                    <p>Resultado para y: $$y = \frac{10}{3}$$</p>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Diagnóstico Matemático" data-example="Ejemplo: resolver un sistema de 2 ecuaciones para planear la distribución de insumos en un taller.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagnóstico matemático">
+                    <defs>
+                        <linearGradient id="diagnostico" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#204a7a" />
+                            <stop offset="100%" stop-color="#2a7a5f" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#diagnostico)" />
+                    <rect x="90" y="120" width="260" height="200" rx="16" fill="#ffffff" opacity="0.15" />
+                    <text x="120" y="170" font-family="Segoe UI, Tahoma, sans-serif" font-size="28" fill="#ffffff" font-weight="700">x + y = 12</text>
+                    <text x="120" y="210" font-family="Segoe UI, Tahoma, sans-serif" font-size="24" fill="#d6f2ea">2x - y = 5</text>
+                    <text x="120" y="250" font-family="Segoe UI, Tahoma, sans-serif" font-size="24" fill="#d6f2ea">x = ?</text>
+                    <polyline points="430,300 520,240 610,260 700,210" fill="none" stroke="#39A900" stroke-width="6" />
+                    <circle cx="430" cy="300" r="8" fill="#ffffff" />
+                    <circle cx="520" cy="240" r="8" fill="#ffffff" />
+                    <circle cx="610" cy="260" r="8" fill="#ffffff" />
+                    <circle cx="700" cy="210" r="8" fill="#ffffff" />
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Diagnóstico Matemático</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#d9f3ee">Base lógica y evaluación inicial</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 2 - Sesión 4</span> <h2>Álgebra Lineal</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Fundamentos de vectores y matrices aplicados a la computación.</p>
+                <div class="example-box">
+                    <strong>El Vector como "Perfil de Datos"</strong>
+                    <p>Un vector es una lista ordenada de números. En computación, lo usamos para representar las características de un objeto.</p>
+                    <p><strong>Ejemplo: Perfil de un Aprendiz</strong></p>
+                    <p>Imagina que queremos representar a un estudiante para un modelo de IA. Definimos un vector $V$:</p>
+                    <p>$x_1$ = Edad (20 años)</p>
+                    <p>$x_2$ = Horas de estudio semanal (40 horas)</p>
+                    <p>$x_3$ = Calificación promedio (4.5)</p>
+                    <p>$$V = [20, 40, 4.5]$$</p>
+                    <p><strong>Aplicación en IA:</strong> Los modelos comparan estos vectores (usando algo llamado "distancia de coseno") para encontrar personas con perfiles similares y recomendarles cursos.</p>
+                    <p><strong>La Matriz como una "Imagen"</strong></p>
+                    <p>Una matriz es una rejilla o tabla de números. Para una computadora, una imagen es una matriz.</p>
+                    <p><strong>Ejemplo: Imagen de 3x3 píxeles en escala de grises</strong></p>
+                    <p>Cada número representa la intensidad de brillo (0 = negro, 255 = blanco):</p>
+                    <p>$$M = \begin{bmatrix} 255 & 0 & 255 \\ 0 & 128 & 0 \\ 255 & 0 & 255 \end{bmatrix}$$</p>
+                    <p>Los 255 en las esquinas forman una "X" blanca. El 128 en el centro es un gris medio. Los 0 son puntos negros.</p>
+                    <p><strong>Aplicación en IA:</strong> Cuando usas filtros en Instagram o cuando una IA reconoce un rostro, lo que hace es realizar operaciones matemáticas sobre estos números para detectar bordes o patrones.</p>
+                    <p><strong>Operación Básica: Escalar (Multiplicación por un número)</strong></p>
+                    <p>Multiplicar un vector o matriz por un solo número se llama "escalar".</p>
+                    <p><strong>Ejemplo: Ajuste de Brillo</strong></p>
+                    <p>Si tenemos nuestra matriz de imagen $M$ y queremos que sea la mitad de brillante, multiplicamos toda la matriz por $0.5$:</p>
+                    <p>$$0.5 \times \begin{bmatrix} 200 & 100 \\ 50 & 0 \end{bmatrix} = \begin{bmatrix} 100 & 50 \\ 25 & 0 \end{bmatrix}$$</p>
+                    <p><strong>Como se ve en codigo (sesion practica)</strong></p>
+                    <div class="code-block">import numpy as np
+
+# Crear un vector (Perfil de aprendiz)
+aprendiz = np.array([20, 40, 4.5])
+
+# Crear una matriz (Imagen pequena)
+imagen = np.array([[255, 0], [0, 255]])
+
+# Operacion: Aumentar valores un 10%
+resultado = imagen * 1.10
+print(resultado)</div>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Álgebra Lineal" data-example="Ejemplo: representar inventarios en una matriz y aplicar operaciones para comparar periodos.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Álgebra lineal">
+                    <defs>
+                        <linearGradient id="algebra" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#2f3e46" />
+                            <stop offset="100%" stop-color="#52796f" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#algebra)" />
+                    <g fill="#ffffff" opacity="0.2">
+                        <rect x="90" y="120" width="320" height="220" rx="14" />
+                    </g>
+                    <g stroke="#ffffff" stroke-width="2" opacity="0.6">
+                        <line x1="150" y1="120" x2="150" y2="340" />
+                        <line x1="210" y1="120" x2="210" y2="340" />
+                        <line x1="270" y1="120" x2="270" y2="340" />
+                        <line x1="330" y1="120" x2="330" y2="340" />
+                        <line x1="90" y1="170" x2="410" y2="170" />
+                        <line x1="90" y1="220" x2="410" y2="220" />
+                        <line x1="90" y1="270" x2="410" y2="270" />
+                    </g>
+                    <line x1="520" y1="310" x2="700" y2="160" stroke="#39A900" stroke-width="6" />
+                    <polygon points="700,160 690,184 716,176" fill="#39A900" />
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Álgebra Lineal</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#e1efe9">Matrices, vectores y transformaciones</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 3 - Sesión 5</span> <h2>Probabilidad y Estadística</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Conceptos clave para entender la incertidumbre y el análisis de datos.</p>
+                <div class="example-box">
+                    <strong>Caso de Estudio: Prediccion de Compra en una Tienda Tech</strong>
+                    <p>Imagina que tenemos los datos historicos de los ultimos 10 clientes que entraron a una tienda. Queremos saber: ¿Cual es la probabilidad de que un cliente compre un Smartwatch si sabemos que es un estudiante?</p>
+                    <p><strong>1. El Set de Datos Historicos (Tabla)</strong></p>
+                    <p>Cliente | Ocupacion | ¿Compro?</p>
+                    <p>1 Estudiante Si</p>
+                    <p>2 Profesional No</p>
+                    <p>3 Estudiante Si</p>
+                    <p>4 Estudiante No</p>
+                    <p>5 Profesional Si</p>
+                    <p>6 Estudiante Si</p>
+                    <p>7 Profesional No</p>
+                    <p>8 Estudiante Si</p>
+                    <p>9 Profesional No</p>
+                    <p>10 Estudiante No</p>
+                    <p><strong>2. Paso a Paso del Calculo</strong></p>
+                    <p><strong>A. Probabilidad Simple: $P(\text{Compra})$</strong></p>
+                    <p>Primero, calculamos la probabilidad general de que cualquier persona compre, sin importar quien sea.</p>
+                    <p>Formula: $P(A) = \frac{\text{Casos Favorables}}{\text{Total de Casos}}$</p>
+                    <p>Calculo: Hay 5 "Si" en 10 clientes.</p>
+                    <p>Resultado: $P(\text{Compra}) = \frac{5}{10} = 0.5$ (50%)</p>
+                    <p><strong>B. Probabilidad Condicional: $P(\text{Compra} | \text{Estudiante})$</strong></p>
+                    <p>Aqui es donde la IA empieza a "aprender". Queremos la probabilidad de Compra dado que el cliente es Estudiante.</p>
+                    <p>Contamos los estudiantes (nuevo total): hay 6 estudiantes.</p>
+                    <p>De esos 6 estudiantes, ¿cuantos compraron?: 4 estudiantes dijeron "Si".</p>
+                    <p>Calculo: $P = \frac{4}{6}$</p>
+                    <p>Resultado: $P \approx 0.66$ (66.6%)</p>
+                    <p><strong>3. Conclusion para los Aprendices</strong></p>
+                    <p>"Si un cliente entra y vemos que es estudiante, nuestra IA le asignara una probabilidad de exito del 66.6%, mucho mas alta que el 50% general. Por lo tanto, el sistema decidira mostrarle publicidad de Smartwatches a el y no al profesional (cuya probabilidad es de solo el 25%)."</p>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Probabilidad y Estadística" data-example="Ejemplo: calcular la probabilidad de fallas en una máquina a partir de registros históricos.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Probabilidad y estadística">
+                    <defs>
+                        <linearGradient id="prob" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#3b3b98" />
+                            <stop offset="100%" stop-color="#5f27cd" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#prob)" />
+                    <rect x="90" y="270" width="420" height="80" rx="10" fill="#ffffff" opacity="0.15" />
+                    <polyline points="110,320 160,300 210,280 260,260 310,250 360,255 410,270 460,295 510,325" fill="none" stroke="#39A900" stroke-width="6" />
+                    <rect x="540" y="190" width="40" height="160" fill="#ffffff" opacity="0.35" />
+                    <rect x="600" y="150" width="40" height="200" fill="#ffffff" opacity="0.5" />
+                    <rect x="660" y="220" width="40" height="130" fill="#ffffff" opacity="0.25" />
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Probabilidad y Estadística</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#efe7ff">Incertidumbre y análisis de datos</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 3 - Sesión 6</span> <h2>Taxonomía de la IA</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Diferenciación técnica entre Inteligencia Artificial, Machine Learning y Deep Learning.</p>
+                <div class="example-box">
+                    <strong>Los Tres Niveles de Abstracción</strong>
+                    <p>Para el mapa conceptual, los estudiantes deben conectar estos tres niveles, donde cada uno es un subconjunto del anterior:</p>
+                    <p><strong>Inteligencia Artificial (IA):</strong> Es el concepto más amplio. Es la capacidad de las máquinas para imitar el comportamiento humano inteligente (lógica, reglas "si-entonces", búsqueda).</p>
+                    <p><strong>Machine Learning (ML):</strong> Un subconjunto de la IA. Aquí la máquina no sigue reglas fijas, sino que aprende patrones a partir de datos. Usa algoritmos estadísticos (Regresiones, Árboles).</p>
+                    <p><strong>Deep Learning (DL):</strong> Un subconjunto del ML. Se basa en Redes Neuronales Artificiales de muchas capas. Es lo que permite reconocer voz, imágenes y traducir idiomas de forma compleja.</p>
+                    <p><strong>Cuadro Comparativo (Insumo para el Mapa)</strong></p>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 6px;">Caracteristica</th>
+                                <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 6px;">IA Tradicional</th>
+                                <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 6px;">Machine Learning</th>
+                                <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 6px;">Deep Learning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Dependencia de Datos</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Baja (usa reglas)</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Media (miles de datos)</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Muy alta (millones de datos)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Intervencion Humana</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Total (el humano programa la regla)</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Alta (el humano limpia y elige rasgos)</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Baja (la red aprende sola los rasgos)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Hardware</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Computadora basica</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">Potencia media</td>
+                                <td style="padding: 6px; border-bottom: 1px solid #eee;">GPU (potencia grafica alta)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px;">Ejemplo</td>
+                                <td style="padding: 6px;">Calculadora / Ajedrez basico</td>
+                                <td style="padding: 6px;">Filtro de spam / Prediccion precios</td>
+                                <td style="padding: 6px;">ChatGPT / Reconocimiento facial</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Actividad sugerida: "El Mapa de Circulos"</strong></p>
+                    <p>Pide a los aprendices que dibujen un diagrama de circulos concentricos (como una muneca rusa o Matrioshka):</p>
+                    <p>Circulo Exterior: IA (El cerebro).</p>
+                    <p>Circulo Medio: ML (Los algoritmos que aprenden).</p>
+                    <p>Circulo Interior: DL (Las neuronas artificiales).</p>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Taxonomía de la IA" data-example="Ejemplo: reconocer que un chatbot básico es IA, mientras que un sistema que aprende con datos es Machine Learning.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Taxonomía de la IA">
+                    <defs>
+                        <linearGradient id="taxo" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#0b486b" />
+                            <stop offset="100%" stop-color="#00a8cc" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#taxo)" />
+                    <circle cx="250" cy="250" r="150" fill="#ffffff" opacity="0.12" />
+                    <circle cx="300" cy="250" r="100" fill="#39A900" opacity="0.25" />
+                    <circle cx="340" cy="250" r="60" fill="#ffffff" opacity="0.35" />
+                    <text x="470" y="230" font-family="Segoe UI, Tahoma, sans-serif" font-size="28" fill="#ffffff" font-weight="700">IA</text>
+                    <text x="470" y="270" font-family="Segoe UI, Tahoma, sans-serif" font-size="24" fill="#d9f6ff">Machine Learning</text>
+                    <text x="470" y="310" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#d9f6ff">Deep Learning</text>
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Taxonomía de la IA</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#e0f8ff">Capas y niveles de abstracción</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 4 - Sesión 7/8</span> <h2>Python y Vectores</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Implementación de operaciones matemáticas usando bibliotecas de Python.</p>
+                <div class="code-block">
+import numpy as np
+vector = np.array([1, 2, 3])
+matriz = np.array([[1,0],[0,1]])
+                </div>
+                <div class="example-box">
+                    <strong>Ejemplo Practico: Suma de Vectores de Ventas</strong>
+                    <p>Imagina que una tienda registra sus ventas diarias de dos productos diferentes (por ejemplo, Cafe y Pan). Queremos obtener el total de ventas combinadas de cada dia de la semana.</p>
+                    <p><strong>1. Concepto Visual</strong></p>
+                    <p>Sumar dos vectores significa sumar cada elemento con su pareja en la misma posicion.</p>
+                    <p><strong>2. Implementacion en Python (NumPy)</strong></p>
+                    <div class="code-block">import numpy as np
+
+# Ventas diarias de Cafe (Lunes a Domingo)
+ventas_cafe = np.array([120, 150, 110, 130, 170, 200, 190])
+
+# Ventas diarias de Pan (Lunes a Domingo)
+ventas_pan = np.array([80, 90, 70, 85, 110, 130, 120])
+
+# Suma vectorial: total de ventas diarias combinadas
+ventas_totales_dia = ventas_cafe + ventas_pan
+
+# Calculo del total semanal absoluto
+total_semanal = np.sum(ventas_totales_dia)
+
+print(f"Ventas totales por dia: {ventas_totales_dia}")
+print(f"Gran total de la semana: ${total_semanal}")</div>
+                    <p><strong>3. Guia para la Sesion </strong></p>
+                    <p>Hora 1: Teoria y configuracion. Instalacion de librerias (pip install numpy) y explicacion de por que usar arrays en lugar de listas.</p>
+                    <p>Hora 2: Creacion y operaciones. Ejercicios de creacion de vectores y operaciones basicas (Suma, Resta, Multiplicacion por escalar).</p>
+                    <p>Hora 3: Indexing y slicing. Como extraer, por ejemplo, solo las ventas del fin de semana (posiciones 5 y 6 del vector).</p>
+                    <p>Hora 4: Taller evaluativo. Pedir a los aprendices que creen un vector de "Precios" y un vector de "Cantidades vendidas" y usen la multiplicacion de vectores para hallar los ingresos totales.</p>
+                    <p><strong>Actividad de Sesion</strong></p>
+                    <p>Calcula el inventario final restando el vector de "Ventas" al vector de "Stock Inicial".</p>
+                    <p><strong>Reto:</strong> ¿Que sucede si los vectores tienen tamanos diferentes? <br><small>(Respuesta: NumPy arrojara un "ValueError" de forma automatica).</small></p>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Python y Vectores" data-example="Ejemplo: usar NumPy para sumar vectores de ventas diarias y obtener totales semanales.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Python y vectores">
+                    <defs>
+                        <linearGradient id="python" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#306998" />
+                            <stop offset="100%" stop-color="#ffd43b" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#python)" />
+                    <line x1="120" y1="320" x2="320" y2="200" stroke="#ffffff" stroke-width="6" />
+                    <polygon points="320,200 300,222 334,220" fill="#ffffff" />
+                    <line x1="120" y1="320" x2="260" y2="340" stroke="#ffffff" stroke-width="6" />
+                    <polygon points="260,340 236,330 242,360" fill="#ffffff" />
+                    <rect x="420" y="140" width="300" height="160" rx="16" fill="#ffffff" opacity="0.2" />
+                    <text x="450" y="205" font-family="Segoe UI, Tahoma, sans-serif" font-size="34" fill="#1b1b1b" font-weight="700">NumPy</text>
+                    <text x="450" y="245" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#1b1b1b">Vectores y matrices</text>
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Python y Vectores</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#f2f2f2">Operaciones con bibliotecas científicas</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 6 - Sesión 11/12</span> <h2>Limpieza con Pandas</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Técnicas de preparación y limpieza de datos (Data Wrangling).</p>
+                <div class="code-block">
+import pandas as pd
+df = pd.read_csv('data.csv')
+df.dropna(inplace=True) # Limpieza de datos nulos.
+                </div>
+                <div class="example-box">
+                    <strong>Semana 6 - Sesión 11 y 12: Data Wrangling</strong>
+                    <p>Abordaremos una de las tareas más críticas en el flujo de trabajo de la IA: el Data Wrangling o limpieza de datos. En el mundo real, los datos están "sucios" (tienen huecos, formatos incorrectos o errores).</p>
+                    <p><strong>Ejemplo Práctico: Limpieza de un Registro de Ventas</strong></p>
+                    <p>Imagina que recibes un archivo CSV con las ventas de la semana, pero el sensor falló algunos días (dejando valores nulos) y el formato de la fecha viene como texto desordenado.</p>
+                    <p><strong>1. Concepto Visual del Proceso</strong></p>
+                    <p>Antes de analizar, debemos pasar los datos por un "embudo de limpieza" para asegurar la calidad del modelo de IA.</p>
+                    <p><strong>2. Implementación en Python (Pandas)</strong></p>
+                    <div class="code-block">import pandas as pd
+import numpy as np
+
+# 1. Creamos un dataset de ejemplo con errores
+data = {
+    'Fecha': ['2023/10/01', '02-10-2023', '2023.10.03', '2023-10-04'],
+    'Ventas': [100, np.nan, 150, 200], # El segundo dato es nulo
+    'Cliente': ['Ana', 'Luis', np.nan, 'Carlos'] # El tercer dato es nulo
+}
+
+df = pd.DataFrame(data)
+
+# --- PASOS DE LIMPIEZA ---
+
+# A. Corregir formatos de fecha: Convertir todo a un formato estándar AAAA-MM-DD
+df['Fecha'] = pd.to_datetime(df['Fecha'], dayfirst=False, fuzzy=True)
+
+# B. Eliminar filas con datos nulos (NaN)
+# En IA, una fila con nulos puede romper el entrenamiento del modelo
+df_limpio = df.dropna()
+
+print("Dataset Original:")
+print(df)
+print("\nDataset Limpio y Corregido:")
+print(df_limpio)</div>
+                    <p><strong>3. Guía para la Sesión de 4 Horas</strong></p>
+                    <p>Hora 1: Introducción a DataFrames. Carga de archivos (read_csv) y exploración inicial (info(), describe()).</p>
+                    <p>Hora 2: Identificación de "Basura". Aprender a usar isnull().sum() para contar cuántos datos faltan por columna.</p>
+                    <p>Hora 3: Estrategias de Limpieza. Diferencia entre borrar filas (dropna) o rellenar valores con el promedio (fillna).</p>
+                    <p>Hora 4: Taller de Formatos. Ejercicios para normalizar fechas y convertir textos a minúsculas para que la IA no trate "Bogotá" y "bogota" como ciudades diferentes.</p>
+                    <p><strong>Actividad: El Sensor Fallido</strong></p>
+                    <p>Recibes datos de temperatura con nulos. ¿Debes borrar la fila o poner la temperatura promedio?</p>
+                    <p><strong>Regla de oro:</strong> Si faltan más del 30% de los datos en una fila, lo mejor es eliminarla para no confundir al modelo.</p>
+                    <p><strong>Diseño de apoyo en la presentación</strong></p>
+                    <p>Pandas es la herramienta estándar para preparar datos. Una IA es tan buena como los datos que recibe.</p>
+                    <div class="code-block">import pandas as pd
+# Cargar y limpiar
+df = pd.read_csv('ventas.csv')
+df['Fecha'] = pd.to_datetime(df['Fecha'])
+df.dropna(subset=['Ventas'], inplace=True)</div>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Limpieza con Pandas" data-example="Ejemplo: eliminar filas con datos nulos y corregir formatos de fecha antes del analisis.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Limpieza con pandas">
+                    <defs>
+                        <linearGradient id="pandas" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#22223b" />
+                            <stop offset="100%" stop-color="#4a4e69" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#pandas)" />
+                    <rect x="90" y="140" width="360" height="200" rx="16" fill="#ffffff" opacity="0.12" />
+                    <g stroke="#ffffff" stroke-width="2" opacity="0.6">
+                        <line x1="120" y1="180" x2="420" y2="180" />
+                        <line x1="120" y1="220" x2="420" y2="220" />
+                        <line x1="120" y1="260" x2="420" y2="260" />
+                        <line x1="120" y1="300" x2="420" y2="300" />
+                        <line x1="180" y1="160" x2="180" y2="330" />
+                        <line x1="260" y1="160" x2="260" y2="330" />
+                        <line x1="340" y1="160" x2="340" y2="330" />
+                    </g>
+                    <rect x="520" y="170" width="180" height="160" rx="20" fill="#39A900" opacity="0.85" />
+                    <rect x="560" y="140" width="100" height="40" rx="8" fill="#ffffff" opacity="0.8" />
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Limpieza con Pandas</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#eaeaea">Preparación de datos confiables</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 7/8 - Sesión 13-16</span> <h2>Regresión Lineal</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Entrenamiento de modelos predictivos para valores numéricos.</p>
+                <div class="code-block">
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train) # Ajuste del modelo a los datos de entrenamiento
+                </div>
+                <div class="example-box">
+                    <strong>Ejemplo Practico: Prediccion de Consumo de Energia</strong>
+                    <p>En este escenario, los aprendices construiran un modelo que ayude a una empresa de servicios publicos a predecir cuantos Kilovatios (kWh) se consumiran en una zona segun el clima y el horario.</p>
+                    <p><strong>1. Concepto Matematico y Visual</strong></p>
+                    <p>La regresion busca la "linea de mejor ajuste". En terminos de IA, estamos resolviendo la ecuacion:</p>
+                    <p>$$y = w_1x_1 + w_2x_2 + b$$</p>
+                    <p>Donde:</p>
+                    <p>$y$: Consumo de energia (lo que queremos predecir).</p>
+                    <p>$x_1, x_2$: Temperatura y Hora del dia (nuestras caracteristicas).</p>
+                    <p>$w$: Pesos (que tanto influye cada variable).</p>
+                    <p>$b$: Sesgo (bias).</p>
+                    <p><strong>2. Implementacion en Python (Scikit-Learn)</strong></p>
+                    <div class="code-block">import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# 1. Datos de ejemplo (Temperatura, Hora del dia, Consumo kWh)
+data = {
+    'temp': [18, 22, 25, 28, 32, 20, 15, 26, 30, 24],
+    'hora': [8, 10, 12, 14, 16, 18, 20, 22, 23, 9],
+    'consumo': [150, 200, 250, 310, 380, 290, 180, 240, 320, 210]
+}
+
+df = pd.DataFrame(data)
+
+# 2. Separar variables (X = caracteristicas, y = objetivo)
+X = df[['temp', 'hora']]
+y = df['consumo']
+
+# 3. Dividir datos en entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 4. Crear y entrenar el modelo
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# 5. Realizar una prediccion
+# ¿Cuanto consumo habra a las 15:00 con 30 grados?
+prediccion = model.predict([[30, 15]])
+print(f"Consumo estimado: {prediccion[0]:.2f} kWh")</div>
+                    <p><strong>3. Dinamica de la Sesion (4 + 4 Horas)</strong></p>
+                    <p><strong>Sesion A (4h):</strong> Fundamentos y entrenamiento. Teoria sobre correlacion; practica con dataset real y visualizacion de nubes de puntos; laboratorio con un modelo de una sola variable.</p>
+                    <p><strong>Sesion B (4h):</strong> Multivariable y evaluacion. Anadir la variable "Hora del dia"; explicar el Error Cuadratico Medio (MSE); reto para bajar el error.</p>
+                    <p><strong>Apoyo para la presentacion</strong></p>
+                    <p>La Regresion Lineal permite predecir valores continuos (como pesos, precios o energia).</p>
+                    <div class="code-block">from sklearn.linear_model import LinearRegression
+# Definir variables y entrenar
+model = LinearRegression()
+model.fit(X_train, y_train)
+# Predecir consumo a 30°C a las 15:00h
+consumo = model.predict([[30, 15]])</div>
+                    <p><strong>Analisis de Resultados</strong></p>
+                    <p>El modelo aprende coeficientes (pesos) para cada variable:</p>
+                    <p><b>Temp:</b> +15.5 kWh por cada grado.</p>
+                    <p><b>Hora:</b> +2.1 kWh por cada hora.</p>
+                    <p><strong>Evaluacion:</strong> Usamos el MSE para saber si nuestra prediccion es confiable.</p>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Regresión Lineal" data-example="Ejemplo: predecir el consumo de energia segun la temperatura y la hora del dia.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Regresión lineal">
+                    <defs>
+                        <linearGradient id="regresion" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#2b2d42" />
+                            <stop offset="100%" stop-color="#8d99ae" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#regresion)" />
+                    <line x1="120" y1="330" x2="620" y2="150" stroke="#39A900" stroke-width="6" />
+                    <circle cx="180" cy="300" r="7" fill="#ffffff" />
+                    <circle cx="240" cy="280" r="7" fill="#ffffff" />
+                    <circle cx="300" cy="260" r="7" fill="#ffffff" />
+                    <circle cx="360" cy="240" r="7" fill="#ffffff" />
+                    <circle cx="420" cy="220" r="7" fill="#ffffff" />
+                    <circle cx="480" cy="200" r="7" fill="#ffffff" />
+                    <circle cx="540" cy="180" r="7" fill="#ffffff" />
+                    <rect x="640" y="140" width="120" height="200" rx="16" fill="#ffffff" opacity="0.12" />
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Regresión Lineal</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#edf2f4">Predicción de valores continuos</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semana 9 - Sesión 17/18</span> <h2>Clasificación y Métricas</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Modelos de clasificación y evaluación de precisión.</p>
+                <div class="code-block">
+from sklearn.tree import DecisionTreeClassifier
+model = DecisionTreeClassifier()
+model.score(X_test, y_test) # Evaluación
+                </div>
+                <div class="example-box">
+                    <strong>Ejemplo Practico: Filtro de Spam Inteligente</strong>
+                    <p>Utilizaremos un modelo de Arbol de Decision para clasificar si un correo electronico es "Spam" o "Deseado" (Ham), basandonos en caracteristicas como la cantidad de enlaces y si contiene palabras clave como "Gratis" o "Ganador".</p>
+                    <p><strong>1. Concepto Visual: Arbol de Decision</strong></p>
+                    <p>El modelo funciona como un diagrama de flujo: "¿Tiene mas de 3 enlaces? SI -> ¿Contiene la palabra 'Gratis'? SI -> Clasificar como SPAM".</p>
+                    <p><strong>2. Implementacion en Python (Scikit-Learn)</strong></p>
+                    <div class="code-block">import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import precision_score, recall_score, confusion_matrix
+
+# 1. Datos de ejemplo: [Cant. Enlaces, Palabra 'Gratis' (0=No, 1=Si)]
+data = {
+    'enlaces': [1, 5, 0, 10, 2, 8, 1, 12, 0, 7],
+    'palabra_gratis': [0, 1, 0, 1, 0, 1, 0, 1, 0, 0],
+    'es_spam': [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+}
+
+df = pd.DataFrame(data)
+
+# 2. Variables
+X = df[['enlaces', 'palabra_gratis']]
+y = df['es_spam']
+
+# 3. Entrenamiento
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+model = DecisionTreeClassifier()
+model.fit(X_train, y_train)
+
+# 4. Predicciones y metricas
+y_pred = model.predict(X_test)
+
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+
+print(f"Precision (¿Que tan confiable es cuando dice que es Spam?): {precision:.2f}")
+print(f"Recall (¿Cuantos del total de Spam logro detectar?): {recall:.2f}")</div>
+                    <p><strong>3. Las Metricas: ¿Como medimos el exito?</strong></p>
+                    <p>Precision: De todos los correos que marque como Spam, ¿cuantos lo eran realmente?</p>
+                    <p>Recall (Exhaustividad): De todos los Spam reales que existian, ¿cuantos logre atrapar?</p>
+                    <p><strong>4. Dinamica de la Sesion</strong></p>
+                    <p><strong>Sesion A (4h):</strong> Los aprendices dibujan un arbol de decision y luego lo codifican en Python.</p>
+                    <p><strong>Sesion B (4h):</strong> Debate sobre falso positivo vs falso negativo; ajuste de hiperparametros para mejorar el Recall.</p>
+                    <p><strong>Apoyo para la presentacion</strong></p>
+                    <p>La clasificacion asigna etiquetas (Spam / No Spam). Evaluamos el exito con la Matriz de Confusion.</p>
+                    <div class="code-block">from sklearn.metrics import precision_score, recall_score
+# Calcular metricas
+p = precision_score(y_test, y_pred)
+r = recall_score(y_test, y_pred)
+print(f"Precision: {p} | Recall: {r}")</div>
+                    <p><strong>Debate Tecnico</strong></p>
+                    <p>¿Que metrica es mas importante para un filtro de Spam?</p>
+                    <p><strong>Dato clave:</strong> En medicina o fraude bancario, preferimos un alto <b>Recall</b> para no dejar pasar casos criticos.</p>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Clasificación y Métricas" data-example="Ejemplo: clasificar correos como spam o no spam y medir precision y recall.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Clasificación y métricas">
+                    <defs>
+                        <linearGradient id="clasificacion" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#1a535c" />
+                            <stop offset="100%" stop-color="#4ecdc4" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#clasificacion)" />
+                    <circle cx="180" cy="260" r="55" fill="#ffffff" opacity="0.35" />
+                    <circle cx="260" cy="230" r="55" fill="#ffffff" opacity="0.25" />
+                    <circle cx="520" cy="250" r="55" fill="#39A900" opacity="0.55" />
+                    <circle cx="600" cy="220" r="55" fill="#39A900" opacity="0.35" />
+                    <rect x="640" y="140" width="120" height="180" rx="14" fill="#ffffff" opacity="0.15" />
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Clasificación y Métricas</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#eafffb">Separación de clases y evaluación</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header">
+            <div><span class="session-info">Semanas 10-12</span> <h2>Proyecto Integrador</h2></div>
+            <img src="logo.png" alt="SENA" class="logo-sena">
+        </div>
+        <div class="content-grid">
+            <div>
+                <p>Aplicación de todo lo aprendido en un problema real.</p>
+                <ul>
+                    <li>Definición del problema (20%)</li>
+                    <li>Preparación de datos (25%) </li>
+                    <li>Modelo funcional (30%)</li>
+                    <li>Sustentación (10%)</li>
+                </ul>
+                <div class="example-box">
+                    <strong>Ejemplo de Proyecto: Optimizacion de Inventario en el Almacen</strong>
+                    <p>Los aprendices utilizaran un dataset real (o simulado con base en datos historicos de la empresa) para predecir si un producto tendra "Alta Demanda" o "Baja Demanda" el proximo mes.</p>
+                    <p><strong>1. Flujo de Trabajo del Proyecto</strong></p>
+                    <p>El proyecto no es solo codigo; es un ciclo de vida completo que deben documentar.</p>
+                    <p><strong>2. Estructura de las 24 Horas Finales</strong></p>
+                    <p><strong>Semana 10 (Sesiones 19-20):</strong> Definicion y carga.</p>
+                    <p>Actividad: Elegir el problema (desercion de aprendices, fallas en maquinaria o ventas).</p>
+                    <p>Entregable: Dataset en un DataFrame de Pandas y descripcion del problema (20% de la nota).</p>
+                    <p><strong>Semana 11 (Sesiones 21-22):</strong> Ingenieria de datos y modelo.</p>
+                    <p>Actividad: Aplicar limpieza y entrenar el modelo (Regresion o Clasificacion).</p>
+                    <p>Entregable: Codigo funcional con modelo entrenado (55% de la nota: limpieza + modelo).</p>
+                    <p><strong>Semana 12 (Sesiones 23-24):</strong> Evaluacion y sustentacion.</p>
+                    <p>Actividad: Crear visualizaciones (barras, matrices de confusion) para mostrar resultados.</p>
+                    <p>Entregable: Presentacion de resultados y metricas finales (25% de la nota: validacion + sustentacion).</p>
+                    <p><strong>3. Ejemplo de Resultado para Presentar</strong></p>
+                    <div class="code-block"># Informe de resultados finales
+print("--- RESULTADOS DEL PROYECTO: PREDICCION DE DEMANDA ---")
+print("Precision del Modelo: 88%")
+print("Interpretacion: El modelo identifica correctamente 9 de cada 10 productos con alta demanda.")
+print("Recomendacion: Aumentar stock de 'Producto A' segun la prediccion del modelo para marzo.")</div>
+                    <p><strong>Rubrica del Proyecto Final</strong></p>
+                    <p><b>20%</b> - Definicion del problema real.</p>
+                    <p><b>25%</b> - Preparacion y limpieza de datos.</p>
+                    <p><b>30%</b> - Modelo funcional en Python.</p>
+                    <p><b>15%</b> - Validacion mediante metricas.</p>
+                    <p><b>10%</b> - Sustentacion y conclusiones.</p>
+                    <p><strong>Consejo para el Aprendiz:</strong> No busques el modelo perfecto, busca el modelo que mejor explique los datos de tu empresa.</p>
+                    <p>Al finalizar, el aprendiz entregara un archivo .ipynb (Jupyter Notebook) con el ciclo completo de la IA.</p>
+                </div>
+            </div>
+            <div class="image-frame" data-title="Proyecto Integrador" data-example="Ejemplo: construir un modelo simple con datos reales de la empresa y presentar resultados.">
+                <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Proyecto integrador">
+                    <defs>
+                        <linearGradient id="proyecto" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#3d405b" />
+                            <stop offset="100%" stop-color="#81b29a" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="450" fill="url(#proyecto)" />
+                    <rect x="120" y="160" width="140" height="140" rx="20" fill="#ffffff" opacity="0.25" />
+                    <rect x="270" y="160" width="140" height="140" rx="20" fill="#39A900" opacity="0.6" />
+                    <rect x="420" y="160" width="140" height="140" rx="20" fill="#ffffff" opacity="0.25" />
+                    <circle cx="190" cy="230" r="28" fill="#ffffff" opacity="0.5" />
+                    <circle cx="340" cy="230" r="28" fill="#ffffff" opacity="0.5" />
+                    <circle cx="490" cy="230" r="28" fill="#ffffff" opacity="0.5" />
+                    <text x="70" y="80" font-family="Segoe UI, Tahoma, sans-serif" font-size="40" fill="#ffffff" font-weight="700">Proyecto Integrador</text>
+                    <text x="70" y="125" font-family="Segoe UI, Tahoma, sans-serif" font-size="20" fill="#edf6f0">Aplicación completa de habilidades</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-indicator" id="progressText">Diapositiva 1 de 12</div>
+    <div class="controls">
+        <button id="prevBtn" onclick="move(-1)" disabled>Anterior</button>
+        <button id="nextBtn" onclick="move(1)">Siguiente</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-card">
+            <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
+            <h3 class="modal-title" id="modalTitle">Ejemplo</h3>
+            <div id="modalText"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const prog = document.getElementById('progressText');
+
+    function move(step) {
+        slides[current].classList.remove('active');
+        current += step;
+        slides[current].classList.add('active');
+        
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === slides.length - 1;
+        
+        prog.innerText = `Diapositiva ${current + 1} de ${slides.length}`;
+    }
+
+    const overlay = document.getElementById('modalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+
+    document.querySelectorAll('.image-frame').forEach((frame) => {
+        frame.addEventListener('click', () => {
+            modalTitle.textContent = frame.dataset.title || 'Ejemplo';
+            const slide = frame.closest('.slide') || document.querySelector('.slide.active');
+            const exampleBox = slide ? slide.querySelector('.example-box') : null;
+
+            if (exampleBox && exampleBox.innerHTML.trim()) {
+                modalText.innerHTML = exampleBox.innerHTML;
+            } else {
+                modalText.textContent = frame.dataset.example || '';
+            }
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([modalText]);
+            }
+            overlay.classList.add('active');
+        });
+    });
+
+    document.getElementById('modalClose').addEventListener('click', () => {
+        overlay.classList.remove('active');
+    });
+
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+            overlay.classList.remove('active');
+        }
+    });
+</script>
+
+</body>
+</html>
